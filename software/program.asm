@@ -2,7 +2,7 @@ asect 0x00
 main: ext 
 exception_handler: ext   
 
-dc main, 0        
+dc main, 0
 dc exception_handler, 0
 dc exception_handler, 0
 dc exception_handler, 0
@@ -11,20 +11,33 @@ dc exception_handler, 0
 align 0x0080
 
 rsect main
-x_space: dc 0
-y_space: dc 0
-command_space:  dc 0
-id_out_space: dc 0
-x_out_space: dc 0
-y_out_space: dc 0
-bullet_id_space:  dc 0
-bullet_x_space:  dc 0
-bullet_y_space:  dc 0
-checker: dc 0
+# Запись
+x_space: dc 0         # x80
+y_space: dc 0         # x82
+checker: dc 0         # x84
+# Отрисовка
+id_out_space: dc 0    # x86
+x_out_space: dc 0     # x88
+y_out_space: dc 0     # x8a
+command_space: dc 0   # x8c
+# Просто пуля
+bullet_id_space: dc 0 # x8e
+bullet_x_space: dc 0  # x90
+bullet_y_space: dc 0  # x92
+# Флаг коллизии
+collision: dc 0       # x94
+run: dc 0             # x96
 
 align 2
 
 main>
+    ldi r5, run
+    ldi r6, 1
+    st r5, r6
+
+    ldi r6, 0
+    st r5, r6
+
     ldi r5, bullet_id_space
     ldi r6, 7
     st r5, r6
@@ -134,6 +147,7 @@ pop r6
 pop r5
 rts
 
+# TODO: fix Unaligned PC exception (status 2)
 movement>
     push r6
     if
@@ -168,8 +182,8 @@ movement>
     rts
 
 otrisovka>
-    jsr movement
-
+    # TODO: uncomment it after fix
+    # jsr movement
     ldi r5, id_out_space 
     ldi r6, 1
     st r5, r6
@@ -205,6 +219,13 @@ otrisovka>
     else
         jsr ai_bullet_movement
     fi
+    ldi r5, command_space
+    ldi r6, 1  
+    st r5, r6
+    ldi r6, 2
+    st r5, r6
+    ldi r6, 0
+    st r5, r6
     rts
 
 ai_bullet_spawn>
