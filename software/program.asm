@@ -27,6 +27,7 @@ bullet_y_space: dc 0  # x92
 # Флаг коллизии
 collision: dc 0       # x94
 run: dc 0             # x96
+speed: dc 0           # x98
 
 align 2
 
@@ -39,10 +40,10 @@ main>
     st r5, r6
 
     ldi r5, bullet_id_space
-    ldi r6, 7
+    ldi r6, 15
     st r5, r6
 
-    ldi r0, 25 #положение корабля. не трогаем
+    ldi r0, 56 #положение корабля. не трогаем
     ldi r1, 100 #расстояние. не трогаем
 
     ldi r5, id_out_space 
@@ -53,7 +54,7 @@ main>
     st r5, r0
 
     ldi r5, y_out_space
-    ldi r6, 29
+    ldi r6, 56
     st r5, r6
 
     ldi r5, command_space 
@@ -85,6 +86,7 @@ check_loop>
     br check_loop        
 
 scan_enemies>
+push r2
 push r5
 push r6
 push r3
@@ -141,21 +143,49 @@ sub r0, r3 #вычитаем из текущего положения нашег
 ld r5, r3
 ldi r5, y_space
 ld r5, r4
+add r4, 2
+ldi r5, bullet_y_space
+ld r5, r2
+sub r2, r4
+if
+    cmp r4, 2
+    is le
+    if
+        cmp r4, -1
+        is ge
+    ldi r5, bullet_x_space
+    ld r5, r2
+    sub r2, r3
+    if
+        cmp r3, -1
+        is ge
+        if
+            cmp r3, 3
+            is le
+            ldi r5, collision
+            ldi r4, 1
+            st r5, r4
+            ldi r4, 0
+            st r5, r4
+            fi
+        fi
+    fi
+fi 
 pop r4
 pop r3
 pop r6
 pop r5
+pop r2
 rts
 
-# TODO: fix Unaligned PC exception (status 2)
 movement>
     push r6
     if
         cmp r1, 0        
         is eq            
+        pop r6
         rts
     fi
-
     if
         cmp r1, 0        
         is gt            
@@ -169,21 +199,14 @@ movement>
         ldi r6, 1        
         add r6, r0       
     fi
-    if
-        cmp r0, 0   
-        is lt
-        ldi r0, 0   
-    fi
-    if
-        cmp r0, 29  
-        is gt
-        ldi r0, 29  
-    fi
+    pop r6
     rts
 
 otrisovka>
-    # TODO: uncomment it after fix
-    # jsr movement
+    push r3
+    push r5
+    push r6
+    jsr movement
     ldi r5, id_out_space 
     ldi r6, 1
     st r5, r6
@@ -192,7 +215,7 @@ otrisovka>
     st r5, r0
 
     ldi r5, y_out_space
-    ldi r6, 29 #можешь сделать это константой в схеме, я уберу тогда кусок 
+    ldi r6, 56 #можешь сделать это константой в схеме, я уберу тогда кусок 
     st r5, r6
 
     ldi r5, command_space
@@ -203,9 +226,11 @@ otrisovka>
 
     ldi r5, bullet_id_space
     ld r5, r4
+    ldi r5, id_out_space
+    st r5, r4
 
     if
-        cmp r4, 3
+        cmp r4, 9
         is ne
         if
             cmp r1, 1
@@ -219,6 +244,14 @@ otrisovka>
     else
         jsr ai_bullet_movement
     fi
+    ldi r3, bullet_x_space
+    ld r3, r4
+    ldi r5, x_out_space
+    st r5, r4
+    ldi r3, bullet_y_space
+    ld r3, r4
+    ldi r5, y_out_space
+    st r5, r4
     ldi r5, command_space
     ldi r6, 1  
     st r5, r6
@@ -226,6 +259,10 @@ otrisovka>
     st r5, r6
     ldi r6, 0
     st r5, r6
+    ldi r1, 100
+    pop r6
+    pop r5
+    pop r3
     rts
 
 ai_bullet_spawn>
@@ -234,15 +271,16 @@ ai_bullet_spawn>
     push r3
 
     ldi r5, bullet_id_space
-    ldi r6, 3
+    ldi r6, 9
     st r5, r6
 
-    ld r0, r3
-    inc r3
+    ldi r5, x_out_space
+    ld r5, r3
+    add r3, 2
     ldi r5, bullet_x_space
     st r5, r3
 
-    ldi r3, 27
+    ldi r3, 55
     ldi r5, bullet_y_space
     st r5, r3
 
@@ -259,7 +297,7 @@ ai_bullet_movement:
     ldi r5, bullet_id_space
     ld r5, r6
     if
-        cmp r6, 3
+        cmp r6, 9
         is ne
         br ai_bullet_movement_end
     fi
@@ -270,7 +308,7 @@ ai_bullet_movement:
         cmp r4, 0
         is lt
         ldi r5, bullet_id_space
-        ldi r6, 7          
+        ldi r6, 15          
         st r5, r6
         br ai_bullet_movement_end
     fi
