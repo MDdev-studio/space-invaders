@@ -28,6 +28,8 @@ bullet_y_space: dc 0  # x92
 collision: dc 0       # x94
 run: dc 0             # x96
 speed: dc 0           # x98
+vec: dc 0 #9a
+gg: dc 0 #9c
 
 align 2
 
@@ -40,7 +42,7 @@ main>
     st r5, r6
 
     ldi r5, bullet_id_space
-    ldi r6, 15
+    ldi r6, 10
     st r5, r6
 
     ldi r0, 56 #положение корабля. не трогаем
@@ -141,14 +143,35 @@ sub r0, r3 #вычитаем из текущего положения нашег
         fi
       fi 
 ld r5, r3
+if 
+  cmp r3, 61
+  is eq
+  ldi r5, vec
+  ldi r4, 1
+  st r5, r4
+fi
+if 
+  cmp r3, 0
+  is eq
+  ldi r5, vec
+  ldi r4, 1
+  st r5, r4
+fi
 ldi r5, y_space
 ld r5, r4
+if
+  cmp r4, 50
+  is ge
+  ldi r5, gg
+  ldi r2, 1
+  st r5, r2
+fi
 add r4, 2
 ldi r5, bullet_y_space
 ld r5, r2
 sub r2, r4
 if
-    cmp r4, 2
+    cmp r4, 3
     is le
     if
         cmp r4, -1
@@ -167,6 +190,9 @@ if
             st r5, r4
             ldi r4, 0
             st r5, r4
+            ldi r5, bullet_id_space
+            ldi r4, 10
+            st r5, r4
             fi
         fi
     fi
@@ -180,29 +206,30 @@ rts
 
 movement>
     push r6
-    if
-        cmp r1, 0        
-        is eq            
+        if
+            cmp r1, 0        
+            is eq            
+            pop r6
+            rts
+        fi
+        if
+            cmp r1, 0        
+            is gt            
+            ldi r6, 1        
+            sub r0, r6       
+            move r6, r0      
+        fi
+        if
+            cmp r1, 0        
+            is lt            
+            ldi r6, 1        
+            add r6, r0       
+        fi
         pop r6
-        rts
-    fi
-    if
-        cmp r1, 0        
-        is gt            
-        ldi r6, 1        
-        sub r0, r6       
-        move r6, r0      
-    fi
-    if
-        cmp r1, 0        
-        is lt            
-        ldi r6, 1        
-        add r6, r0       
-    fi
-    pop r6
     rts
 
 otrisovka>
+    push r4
     push r3
     push r5
     push r6
@@ -228,7 +255,6 @@ otrisovka>
     ld r5, r4
     ldi r5, id_out_space
     st r5, r4
-
     if
         cmp r4, 9
         is ne
@@ -259,10 +285,20 @@ otrisovka>
     st r5, r6
     ldi r6, 0
     st r5, r6
-    ldi r1, 100
+    ldi r5, vec
+    ld r5, r4
+    if 
+      cmp r4, 1
+      is eq
+      ldi r1, 100
+      ldi r4, 0
+      st r5, r4
+      jsr scan_enemies
+    fi
     pop r6
     pop r5
     pop r3
+    pop r4
     rts
 
 ai_bullet_spawn>
@@ -308,7 +344,7 @@ ai_bullet_movement:
         cmp r4, 0
         is lt
         ldi r5, bullet_id_space
-        ldi r6, 15          
+        ldi r6, 10          
         st r5, r6
         br ai_bullet_movement_end
     fi
