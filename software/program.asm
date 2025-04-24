@@ -26,22 +26,40 @@ bullet_x_space: dc 0  # x90
 bullet_y_space: dc 0  # x92
 # Флаг коллизии
 collision: dc 0       # x94
+
+
+#Технические моменты
 run: dc 0             # x96
 speed: dc 0           # x98
 vec: dc 0 #9a
 gg: dc 0 #9c
+score: dc 0 #9e
+button: dc 0 #a0
+
+#Игрок и его пуля
+playbul_id_space: dc 0 #a2
+playbul_x_space: dc 0 #a4
+playbul_y_space: dc 0 #a6
+playx_space: dc 0 #a8
+playy_space: dc 0 #aa
+
+#Стрельба врагов
+rand: dc 0 #ac
+
+
 
 align 2
 
 main>
-    ldi r5, run
-    ldi r6, 1
-    st r5, r6
-
+    # Инициализация программы
+    ldi r5, score
     ldi r6, 0
     st r5, r6
 
     ldi r5, bullet_id_space
+    ldi r6, 10
+    st r5, r6
+    ldi r5, playbul_id_space
     ldi r6, 10
     st r5, r6
 
@@ -59,13 +77,13 @@ main>
     ldi r6, 56
     st r5, r6
 
-    ldi r5, command_space 
-    ldi r6, 1  
-    st r5, r6 
-    ldi r6, 2
-    st r5, r6 
+    # Запуск аппаратной части
+    ldi r5, run
+    ldi r6, 1
+    st r5, r6
 
-
+    ldi r6, 0
+    st r5, r6
 
 check_loop>
     ldi r5, checker
@@ -193,6 +211,44 @@ if
             ldi r5, bullet_id_space
             ldi r4, 10
             st r5, r4
+            ldi r5, score
+            ld r5, r4
+            inc r4
+            st r5, r4
+            fi
+        fi
+    fi
+fi 
+ldi r5, playbul_y_space
+ld r5, r2
+sub r2, r4
+if
+    cmp r4, 3
+    is le
+    if
+        cmp r4, -1
+        is ge
+    ldi r5, playbul_x_space
+    ld r5, r2
+    sub r2, r3
+    if
+        cmp r3, -1
+        is ge
+        if
+            cmp r3, 3
+            is le
+            ldi r5, collision
+            ldi r4, 1
+            st r5, r4
+            ldi r4, 0
+            st r5, r4
+            ldi r5, playbul_id_space
+            ldi r4, 10
+            st r5, r4
+            ldi r5, score
+            ld r5, r4
+            inc r4
+            st r5, r4
             fi
         fi
     fi
@@ -242,7 +298,7 @@ otrisovka>
     st r5, r0
 
     ldi r5, y_out_space
-    ldi r6, 56 #можешь сделать это константой в схеме, я уберу тогда кусок 
+    ldi r6, 56 
     st r5, r6
 
     ldi r5, command_space
@@ -250,7 +306,7 @@ otrisovka>
     st r5, r6
     ldi r6, 0
     st r5, r6
-
+    #отрисовка пули ИИ
     ldi r5, bullet_id_space
     ld r5, r4
     ldi r5, id_out_space
@@ -269,6 +325,39 @@ otrisovka>
         fi
     else
         jsr ai_bullet_movement
+    fi
+    ldi r3, bullet_x_space
+    ld r3, r4
+    ldi r5, x_out_space
+    st r5, r4
+    ldi r3, bullet_y_space
+    ld r3, r4
+    ldi r5, y_out_space
+    st r5, r4
+    ldi r5, command_space
+    ldi r6, 1  
+    st r5, r6
+    ldi r6, 0
+    st r5, r6
+    #Отрисовка пули игрока
+    ldi r5, playbul_id_space
+    ld r5, r4
+    ldi r5, id_out_space
+    st r5, r4
+    if
+      cmp r4, 9
+      is ne
+        ldi r5, button
+        ld r5, r4
+        if
+          cmp r4, 1
+          is eq
+          jsr playbul_spawn
+          ldi r4, 0
+          st r5, r4
+        fi
+    else
+        jsr playbul_movement
     fi
     ldi r3, bullet_x_space
     ld r3, r4
@@ -324,6 +413,62 @@ ai_bullet_spawn>
     pop r6
     pop r5
     rts
+
+playbul_spawn>
+    push r5
+    push r6
+    push r3
+
+    ldi r5, playbul_id_space
+    ldi r6, 9
+    st r5, r6
+
+    ldi r5, playx_space
+    ld r5, r3
+    add r3, 2
+    ldi r5, playbul_x_space
+    st r5, r3
+
+    ldi r3, playy_space
+    ldi r5, playbul_y_space
+    st r5, r3
+
+    pop r3
+    pop r6
+    pop r5
+    rts
+
+playbul_movement:
+    push r5
+    push r4
+    push r6
+
+    ldi r5, playbul_id_space
+    ld r5, r6
+    if
+        cmp r6, 9
+        is ne
+        br playbul_movement_end
+    fi
+    ldi r5, playbul_y_space
+    ld r5, r4
+    sub r4, 2               
+    if
+        cmp r4, 0
+        is lt
+        ldi r5, playbul_id_space
+        ldi r6, 10          
+        st r5, r6
+        br playbul_movement_end
+    fi
+    ldi r5, playbul_y_space
+    st r5, r4
+playbul_movement_end:
+    pop r6
+    pop r4
+    pop r5
+    rts
+
 
 ai_bullet_movement:
     push r5
