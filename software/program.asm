@@ -60,7 +60,15 @@ main>
     ldi r6, 10
     st r5, r6
     ldi r5, playbul_id_space
-    ldi r6, 10
+    st r5, r6
+    ldi r5, bullet_x_space
+    ldi r6, -1
+    st r5, r6
+    ldi r5, bullet_y_space
+    st r5, r6
+    ldi r5, playbul_x_space
+    st r5, r6
+    ldi r5, playbul_y_space
     st r5, r6
 
     ldi r0, 56 #положение корабля. не трогаем
