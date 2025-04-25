@@ -56,11 +56,6 @@ main>
     ldi r6, 0
     st r5, r6
 
-    ldi r5, bullet_id_space
-    ldi r6, 10
-    st r5, r6
-    ldi r5, playbul_id_space
-    st r5, r6
     ldi r5, bullet_x_space
     ldi r6, -1
     st r5, r6
@@ -69,6 +64,11 @@ main>
     ldi r5, playbul_x_space
     st r5, r6
     ldi r5, playbul_y_space
+    st r5, r6
+    ldi r5, bullet_id_space
+    ldi r6, 10
+    st r5, r6
+    ldi r5, playbul_id_space
     st r5, r6
 
     ldi r0, 56 #положение корабля. не трогаем
@@ -227,6 +227,8 @@ if
         fi
     fi
 fi 
+ldi r5, y_space
+ld r5, r4
 ldi r5, playbul_y_space
 ld r5, r2
 sub r2, r4
@@ -367,11 +369,11 @@ otrisovka>
     else
         jsr playbul_movement
     fi
-    ldi r3, bullet_x_space
+    ldi r3, playbul_x_space
     ld r3, r4
     ldi r5, x_out_space
     st r5, r4
-    ldi r3, bullet_y_space
+    ldi r3, playbul_y_space
     ld r3, r4
     ldi r5, y_out_space
     st r5, r4
@@ -390,7 +392,6 @@ otrisovka>
       ldi r1, 100
       ldi r4, 0
       st r5, r4
-      jsr scan_enemies
     fi
     pop r6
     pop r5
@@ -437,7 +438,8 @@ playbul_spawn>
     ldi r5, playbul_x_space
     st r5, r3
 
-    ldi r3, playy_space
+    ldi r5, playy_space
+    ld r5, r3
     ldi r5, playbul_y_space
     st r5, r3
 
@@ -460,7 +462,7 @@ playbul_movement:
     fi
     ldi r5, playbul_y_space
     ld r5, r4
-    sub r4, 2               
+    sub r4, 3               
     if
         cmp r4, 0
         is lt
@@ -492,7 +494,7 @@ ai_bullet_movement:
     fi
     ldi r5, bullet_y_space
     ld r5, r4
-    sub r4, 2               
+    sub r4, 3               
     if
         cmp r4, 0
         is lt
