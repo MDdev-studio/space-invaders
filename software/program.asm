@@ -46,6 +46,9 @@ playy_space: dc 0 #aa
 #Стрельба врагов
 rand: dc 0 #ac
 
+#Победа
+win: dc 0 #ae
+
 
 
 align 2
@@ -223,6 +226,13 @@ if
             ld r5, r4
             inc r4
             st r5, r4
+            if
+              cmp r4, 15
+              is eq
+              ldi r5, win
+              ldi r4, 1
+              st r5, r4
+            fi
             fi
         fi
     fi
@@ -259,6 +269,13 @@ if
             ld r5, r4
             inc r4
             st r5, r4
+            if
+              cmp r4, 15
+              is eq
+              ldi r5, win
+              ldi r4, 1
+              st r5, r4
+            fi
             fi
         fi
     fi
@@ -462,7 +479,7 @@ playbul_movement:
     fi
     ldi r5, playbul_y_space
     ld r5, r4
-    sub r4, 3               
+    sub r4, 4               
     if
         cmp r4, 0
         is lt
@@ -494,7 +511,7 @@ ai_bullet_movement:
     fi
     ldi r5, bullet_y_space
     ld r5, r4
-    sub r4, 3               
+    sub r4, 4               
     if
         cmp r4, 0
         is lt
