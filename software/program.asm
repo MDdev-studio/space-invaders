@@ -49,6 +49,14 @@ rand: dc 0 #ac
 #Победа
 win: dc 0 #ae
 
+#ХПШКИ
+hp: dc 0 #b0
+
+#Пули врагов
+bull_1id: dc 0 #b2
+bull_1x: dc 0 #b4
+bull_1y: dc 0 #b6
+
 
 
 align 2
@@ -68,12 +76,23 @@ main>
     st r5, r6
     ldi r5, playbul_y_space
     st r5, r6
+    ldi r5, bull_1x
+    st r5, r6
+    ldi r5, bull_1y
+    st r5, r6
     ldi r5, bullet_id_space
     ldi r6, 10
     st r5, r6
     ldi r5, playbul_id_space
     st r5, r6
+    ldi r5, bull_1id
+    st r5, r6
 
+    #Пропись хп
+    ldi r5, hp
+    ldi r6, 3
+    st r5, r6
+    
     ldi r0, 56 #положение корабля. не трогаем
     ldi r1, 100 #расстояние. не трогаем
 
@@ -180,7 +199,7 @@ if
   st r5, r4
 fi
 if 
-  cmp r3, 0
+  cmp r3, 1
   is eq
   ldi r5, vec
   ldi r4, 1
@@ -280,6 +299,25 @@ if
         fi
     fi
 fi 
+
+#Проверка, существует ли пуля первого,второго,третьего и т.д врагов (макс 6)
+ldi r5, bull_1id
+ld r5, r6
+if
+cmp r6, 10
+is eq
+  ldi r5, rand
+  ld r5, r6
+  if
+  cmp r6, 3
+    is eq
+    ldi r5, bull_1x
+    st r5, r3
+    ldi r5, bull_1y
+    st r5, r4
+  fi
+# else тут будет огромный пласт с проверкой последующих ячеек пуль
+fi
 pop r4
 pop r3
 pop r6
@@ -366,6 +404,31 @@ otrisovka>
     st r5, r6
     ldi r6, 0
     st r5, r6
+    #Отрисовка пуль врагов
+    ldi r5, bull_1id
+    ld r5, r4
+    ldi r5, id_out_space
+    st r5, r4
+    if
+      cmp r4, 9
+      is ne
+      jsr spawnbul
+    else
+    jsr movebul
+    fi
+    ldi r5, bull_1x
+    ld r5, r4
+    ldi r5, x_out_space
+    st r5, r4
+    ldi r3, bull_1y
+    ld r3, r4
+    ldi r5, y_out_space
+    st r5, r4
+    ldi r5, command_space
+    ldi r6, 1  
+    st r5, r6
+    ldi r6, 0
+    st r5, r6    
     #Отрисовка пули игрока
     ldi r5, playbul_id_space
     ld r5, r4
@@ -410,6 +473,15 @@ otrisovka>
       ldi r4, 0
       st r5, r4
     fi
+    #Возможно сломает всю логику ИИ, но попробовать надо
+  # if 
+  #   cmp r4, 0
+  #   is eq
+  #    ldi r1, 100
+  #    ldi r4, 1
+  #    st r5, r4
+  #  fi
+  #уберём если что
     pop r6
     pop r5
     pop r3
@@ -527,6 +599,50 @@ ai_bullet_movement_end:
     pop r4
     pop r5
     rts
+
+spawnbul> #переписать в макрос, когда будет работать!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    push r5
+    push r6
+
+    ldi r5, bull_1id
+    ldi r6, 9
+    st r5, r6
+
+    pop r6
+    pop r5
+    rts
+
+movebul> #И ЭТО ТОЖЕ В МАКРОСЯТИНУ
+    push r5
+    push r4
+    push r6
+
+    ldi r5, bull_1id
+    ld r5, r6
+    if
+        cmp r6, 9
+        is ne
+        br end_movebul
+    fi
+    ldi r5, bull_1y
+    ld r5, r4
+    add r4, 2               
+    if
+        cmp r4, 58
+        is lt
+        ldi r5, bullet_id_space
+        ldi r6, 10          
+        st r5, r6
+        br ai_bullet_movement_end
+    fi
+    ldi r5, bullet_y_space
+    st r5, r4
+end_movebul:
+    pop r6
+    pop r4
+    pop r5
+    rts
+
 
 exception_handler>
 halt
