@@ -56,6 +56,9 @@ hp: dc 0 #b0
 bull_1id: dc 0 #b2
 bull_1x: dc 0 #b4
 bull_1y: dc 0 #b6
+bull_2id: dc 0 #b8
+bull_2x: dc 0 #ba
+bull_2y: dc 0 #bc
 
 
 
@@ -444,12 +447,65 @@ otrisovka>
     ldi r3, bull_1y
     ld r3, r4
     ldi r5, y_out_space
-    st r5, r4
+    st r5, r4 
     ldi r5, command_space
     ldi r6, 1  
     st r5, r6
     ldi r6, 0
-    st r5, r6    
+    st r5, r6 
+        #проверка коллизии пули врагов. Замакросить, если будет работать.
+    ldi r5, bull_1id
+    ld r5, r6
+    if
+    cmp r6, 9
+      is eq
+      ldi r5, playy_space
+      ld r5, r3
+      ldi r5, bull_1y
+      ld r5, r4
+      sub r4, r3
+      if
+        cmp r3, 3
+        is le
+        if
+          cmp r3, -1
+          is ge
+          ldi r5, playx_space
+          ld r5, r3
+          ldi r5, bull_1x
+          ld r5, r4
+          sub r4, r3
+          if
+            cmp r3, 3
+            is le
+              if
+              cmp r3, -1
+              is ge
+              st r5, r4
+              ldi r5, bull_1id
+              ldi r6, 10
+              st r5, r6
+              ldi r5, hp
+              ld r5, r6
+              dec r6
+              st r5, r6
+              if
+                cmp r6, 0
+                is eq
+                ldi r5, gg
+                ldi r6, 1
+                st r5, r6
+              fi
+              fi
+          fi
+        fi
+      fi
+    fi    
+    ldi r5, command_space
+    ldi r6, 1  
+    st r5, r6
+    ldi r6, 0
+    st r5, r6         
     #Отрисовка пули игрока
     ldi r5, playbul_id_space
     ld r5, r4
@@ -622,7 +678,7 @@ ai_bullet_movement_end:
     rts
 
 
- movebul> #И ЭТО ТОЖЕ В МАКРОСЯТИНУ
+ movebul> 
     push r5
     push r4
     push r6
