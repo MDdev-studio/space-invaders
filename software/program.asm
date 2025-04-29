@@ -214,91 +214,105 @@ if
   ldi r2, 1
   st r5, r2
 fi
-add r4, 2
-ldi r5, bullet_y_space
-ld r5, r2
-sub r2, r4
+ldi r5, bullet_id_space
+ld r5, r6
 if
-    cmp r4, 3
-    is le
-    if
-        cmp r4, -1
-        is ge
-    ldi r5, bullet_x_space
-    ld r5, r2
-    sub r2, r3
-    if
-        cmp r3, -1
-        is ge
-        if
-            cmp r3, 3
-            is le
-            ldi r5, collision
-            ldi r4, 1
-            st r5, r4
-            ldi r4, 0
-            st r5, r4
-            ldi r5, bullet_id_space
-            ldi r4, 10
-            st r5, r4
-            ldi r5, score
-            ld r5, r4
-            inc r4
-            st r5, r4
-            if
-              cmp r4, 15
-              is eq
-              ldi r5, win
+  cmp r6, 9
+  is eq
+  ldi r5, y_space
+  ld r5, r4
+  add r4, 2
+  ldi r5, bullet_y_space
+  ld r5, r2
+  sub r2, r4
+  if
+      cmp r4, 3
+      is le
+      if
+          cmp r4, -1
+          is ge
+      ldi r5, bullet_x_space
+      ld r5, r2
+      sub r2, r3
+      if
+          cmp r3, -1
+          is ge
+          if
+              cmp r3, 3
+              is le
+              ldi r5, collision
               ldi r4, 1
               st r5, r4
-            fi
-            fi
-        fi
-    fi
-fi 
-ldi r5, y_space
-ld r5, r4
-ldi r5, playbul_y_space
-ld r5, r2
-sub r2, r4
+              ldi r4, 0
+              st r5, r4
+              ldi r5, bullet_id_space
+              ldi r4, 10
+              st r5, r4
+              ldi r5, score
+              ld r5, r4
+              inc r4
+              st r5, r4
+              if
+                cmp r4, 15
+                is eq
+                ldi r5, win
+                ldi r4, 1
+                st r5, r4
+              fi
+              fi
+          fi
+      fi
+  fi 
+fi
+ldi r5, playbul_id_space
+ld r5, r6
 if
-    cmp r4, 3
-    is le
-    if
-        cmp r4, -1
-        is ge
-    ldi r5, playbul_x_space
-    ld r5, r2
-    sub r2, r3
-    if
-        cmp r3, -1
-        is ge
-        if
-            cmp r3, 3
-            is le
-            ldi r5, collision
-            ldi r4, 1
-            st r5, r4
-            ldi r4, 0
-            st r5, r4
-            ldi r5, playbul_id_space
-            ldi r4, 10
-            st r5, r4
-            ldi r5, score
-            ld r5, r4
-            inc r4
-            st r5, r4
-            if
-              cmp r4, 15
-              is eq
-              ldi r5, win
+  cmp r6, 9
+  is eq
+  ldi r5, y_space
+  ld r5, r4
+  ldi r5, playbul_y_space
+  ld r5, r2
+  sub r2, r4
+  if
+      cmp r4, 3
+      is le
+      if
+          cmp r4, -1
+          is ge
+      ldi r5, playbul_x_space
+      ld r5, r2
+      sub r2, r3
+      if
+          cmp r3, -1
+          is ge
+          if
+              cmp r3, 3
+              is le
+              ldi r5, collision
               ldi r4, 1
               st r5, r4
-            fi
-            fi
-        fi
-    fi
-fi 
+              ldi r4, 0
+              st r5, r4
+              ldi r5, playbul_id_space
+              ldi r4, 10
+              st r5, r4
+              ldi r5, score
+              ld r5, r4
+              inc r4
+              st r5, r4
+              if
+                cmp r4, 15
+                is eq
+                ldi r5, win
+                ldi r4, 1
+                st r5, r4
+              fi
+              fi
+          fi
+      fi
+  fi 
+fi
 
 #Проверка, существует ли пуля первого,второго,третьего и т.д врагов (макс 6)
 ldi r5, bull_1id
@@ -311,8 +325,16 @@ is eq
   if
   cmp r6, 3
     is eq
+    ldi r5, bull_1id
+    ldi r6, 9
+    st r5, r6
+    ldi r5, x_space
+    ld r5, r3
+    add r3, 2
     ldi r5, bull_1x
     st r5, r3
+    ldi r5, y_space
+    ld r5, r4
     ldi r5, bull_1y
     st r5, r4
   fi
@@ -407,15 +429,14 @@ otrisovka>
     #Отрисовка пуль врагов
     ldi r5, bull_1id
     ld r5, r4
+     if
+       cmp r4, 9
+       is eq
+       jsr movebul
+     fi
     ldi r5, id_out_space
     st r5, r4
-    if
-      cmp r4, 9
-      is ne
-      jsr spawnbul
-    else
-    jsr movebul
-    fi
+
     ldi r5, bull_1x
     ld r5, r4
     ldi r5, x_out_space
@@ -600,19 +621,8 @@ ai_bullet_movement_end:
     pop r5
     rts
 
-spawnbul> #переписать в макрос, когда будет работать!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    push r5
-    push r6
 
-    ldi r5, bull_1id
-    ldi r6, 9
-    st r5, r6
-
-    pop r6
-    pop r5
-    rts
-
-movebul> #И ЭТО ТОЖЕ В МАКРОСЯТИНУ
+ movebul> #И ЭТО ТОЖЕ В МАКРОСЯТИНУ
     push r5
     push r4
     push r6
@@ -629,13 +639,13 @@ movebul> #И ЭТО ТОЖЕ В МАКРОСЯТИНУ
     add r4, 2               
     if
         cmp r4, 58
-        is lt
-        ldi r5, bullet_id_space
+        is ge
+        ldi r5,bull_1id
         ldi r6, 10          
         st r5, r6
         br ai_bullet_movement_end
     fi
-    ldi r5, bullet_y_space
+    ldi r5, bull_1y
     st r5, r4
 end_movebul:
     pop r6

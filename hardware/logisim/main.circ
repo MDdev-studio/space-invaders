@@ -16,7 +16,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="label" val="hp"/>
     </tool>
     <tool name="Probe">
-      <a name="facing" val="north"/>
+      <a name="facing" val="west"/>
       <a name="radix" val="16"/>
     </tool>
     <tool name="Tunnel">
@@ -29,7 +29,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="facing" val="north"/>
     </tool>
     <tool name="Constant">
-      <a name="width" val="16"/>
+      <a name="facing" val="north"/>
       <a name="value" val="0x0"/>
     </tool>
     <tool name="Power">
@@ -51,7 +51,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="facing" val="north"/>
     </tool>
     <tool name="AND Gate">
-      <a name="facing" val="west"/>
+      <a name="facing" val="south"/>
       <a name="size" val="30"/>
       <a name="inputs" val="2"/>
     </tool>
@@ -1777,7 +1777,6 @@ fc 15 20 b6 0 2c 50 14
     <wire from="(1110,380)" to="(1320,380)"/>
     <wire from="(440,240)" to="(500,240)"/>
     <wire from="(1230,480)" to="(1230,500)"/>
-    <wire from="(180,390)" to="(180,400)"/>
     <wire from="(190,560)" to="(190,570)"/>
     <wire from="(890,370)" to="(950,370)"/>
     <wire from="(1120,530)" to="(1120,560)"/>
@@ -1862,6 +1861,7 @@ fc 15 20 b6 0 2c 50 14
     <wire from="(1130,530)" to="(1130,550)"/>
     <wire from="(860,270)" to="(900,270)"/>
     <wire from="(680,170)" to="(680,390)"/>
+    <wire from="(180,380)" to="(180,400)"/>
     <wire from="(1130,400)" to="(1130,470)"/>
     <wire from="(870,300)" to="(870,390)"/>
     <wire from="(1330,390)" to="(1330,530)"/>
@@ -2269,11 +2269,6 @@ fc 15 20 b6 0 2c 50 14
       <a name="tristate" val="false"/>
       <a name="label" val="player inp y"/>
     </comp>
-    <comp lib="0" loc="(180,390)" name="Tunnel">
-      <a name="facing" val="south"/>
-      <a name="label" val="hold"/>
-      <a name="labelfont" val="SansSerif plain 9"/>
-    </comp>
     <comp lib="0" loc="(640,570)" name="Tunnel">
       <a name="facing" val="east"/>
       <a name="label" val="write"/>
@@ -2374,6 +2369,11 @@ fc 15 20 b6 0 2c 50 14
     <comp lib="1" loc="(1080,500)" name="AND Gate">
       <a name="size" val="30"/>
       <a name="inputs" val="2"/>
+    </comp>
+    <comp lib="0" loc="(180,380)" name="Tunnel">
+      <a name="facing" val="south"/>
+      <a name="label" val="hold"/>
+      <a name="labelfont" val="SansSerif plain 9"/>
     </comp>
     <comp lib="0" loc="(1240,520)" name="Tunnel">
       <a name="facing" val="east"/>
@@ -6883,7 +6883,7 @@ fc 15 20 b6 0 2c 50 14
       <circ-port height="10" pin="1120,360" width="10" x="75" y="105"/>
       <circ-port height="10" pin="760,470" width="10" x="75" y="55"/>
       <circ-port height="10" pin="470,110" width="10" x="55" y="45"/>
-      <circ-port height="8" pin="270,140" width="8" x="66" y="46"/>
+      <circ-port height="8" pin="260,80" width="8" x="66" y="46"/>
       <circ-port height="8" pin="240,800" width="8" x="46" y="126"/>
       <circ-port height="10" pin="250,200" width="10" x="45" y="45"/>
       <circ-port height="10" pin="1120,450" width="10" x="75" y="115"/>
@@ -7048,6 +7048,7 @@ fc 15 20 b6 0 2c 50 14
     <wire from="(440,340)" to="(440,350)"/>
     <wire from="(390,370)" to="(390,380)"/>
     <wire from="(1230,330)" to="(1230,360)"/>
+    <wire from="(280,100)" to="(280,110)"/>
     <wire from="(1410,140)" to="(1410,230)"/>
     <wire from="(960,700)" to="(960,730)"/>
     <wire from="(420,240)" to="(420,260)"/>
@@ -7055,6 +7056,7 @@ fc 15 20 b6 0 2c 50 14
     <wire from="(760,420)" to="(860,420)"/>
     <wire from="(420,320)" to="(420,350)"/>
     <wire from="(960,60)" to="(960,80)"/>
+    <wire from="(260,80)" to="(260,110)"/>
     <wire from="(1070,90)" to="(1120,90)"/>
     <wire from="(730,470)" to="(730,490)"/>
     <wire from="(900,270)" to="(920,270)"/>
@@ -7232,6 +7234,11 @@ fc 15 20 b6 0 2c 50 14
     </comp>
     <comp lib="0" loc="(530,250)" name="Pull Resistor">
       <a name="facing" val="north"/>
+    </comp>
+    <comp lib="1" loc="(270,140)" name="AND Gate">
+      <a name="facing" val="south"/>
+      <a name="size" val="30"/>
+      <a name="inputs" val="2"/>
     </comp>
     <comp lib="1" loc="(570,290)" name="XNOR Gate">
       <a name="facing" val="north"/>
@@ -7493,6 +7500,11 @@ fc 15 20 b6 0 2c 50 14
       <a name="label" val="draw"/>
       <a name="labelfont" val="SansSerif plain 9"/>
     </comp>
+    <comp lib="0" loc="(280,100)" name="Tunnel">
+      <a name="facing" val="south"/>
+      <a name="label" val="draw"/>
+      <a name="labelfont" val="SansSerif plain 9"/>
+    </comp>
     <comp lib="6" loc="(855,88)" name="Text">
       <a name="text" val="base texture id2"/>
     </comp>
@@ -7527,6 +7539,11 @@ fc 15 20 b6 0 2c 50 14
     </comp>
     <comp lib="0" loc="(380,380)" name="Pull Resistor">
       <a name="facing" val="north"/>
+    </comp>
+    <comp lib="0" loc="(260,80)" name="Pin">
+      <a name="facing" val="south"/>
+      <a name="tristate" val="false"/>
+      <a name="label" val="collide"/>
     </comp>
     <comp lib="1" loc="(390,470)" name="OR Gate">
       <a name="facing" val="north"/>
@@ -7606,11 +7623,6 @@ fc 15 20 b6 0 2c 50 14
     </comp>
     <comp lib="1" loc="(1070,90)" name="Controlled Buffer">
       <a name="width" val="16"/>
-    </comp>
-    <comp lib="0" loc="(270,140)" name="Pin">
-      <a name="facing" val="south"/>
-      <a name="tristate" val="false"/>
-      <a name="label" val="collide"/>
     </comp>
     <comp lib="0" loc="(240,450)" name="Tunnel">
       <a name="facing" val="north"/>
