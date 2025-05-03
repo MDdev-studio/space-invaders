@@ -3,10 +3,10 @@ main: ext
 exception_handler: ext
 
 dc main, 0
-dc exception_handler, 0
-dc exception_handler, 0
-dc exception_handler, 0
-dc exception_handler, 0
+dc exception_handler, 1
+dc exception_handler, 2
+dc exception_handler, 3
+dc exception_handler, 4
 
 align 0x0080
 
@@ -26,7 +26,6 @@ bullet_x_space: dc 0  # x90
 bullet_y_space: dc 0  # x92
 # Флаг коллизии
 collision: dc 0       # x94
-
 
 #Технические моменты
 run: dc 0             # x96
@@ -139,7 +138,7 @@ main>
     if  
       cmp r6, 2
     is eq
-      jsr otrisovka
+      jsr draw
       ldi r5, checker
       ldi r6, 0
       st r5, r6
@@ -236,7 +235,7 @@ scan_enemies>
       cmp r6, 3
     is eq
       ldi r5, bull_1id
-      ldi r6, 10
+      ldi r6, 15
       st r5, r6
       ldi r5, x_space
       ld r5, r3
@@ -263,7 +262,7 @@ scan_enemies>
       cmp r6, 2        # Отдельное условие для второго врага
     is eq
       ldi r5, bull_2id
-      ldi r6, 10
+      ldi r6, 15
       st r5, r6
       ldi r5, x_space
       ld r5, r3
@@ -334,12 +333,7 @@ macro DELETE_BULL/1
   fi
 mend
 
-otrisovka>
-  push r4
-  push r3
-  push r5
-  push r6
-
+draw>
   jsr movement
 
   # Отрисовка ИИ
@@ -401,9 +395,8 @@ otrisovka>
   #Отрисовка пуль врагов
   ldi r5, bull_1id
   ld r5, r4
-
   if
-    cmp r4, 10
+    cmp r4, 15
   is eq
     jsr movebul
   fi
@@ -430,9 +423,8 @@ otrisovka>
   # Обработка второй пули врага
   ldi r5, bull_2id
   ld r5, r4
-
   if
-    cmp r4, 10
+    cmp r4, 15
   is eq
     jsr movebul2      # Новая подпрограмма для движения
   fi
@@ -517,14 +509,10 @@ otrisovka>
   #    st r5, r4
   #  fi
   #уберём если что
-
-  pop r6
-  pop r5
-  pop r3
-  pop r4
+  
   rts
 
-ai_bullet_spawn>
+ai_bullet_spawn:
   push r5
   push r6
   push r3
@@ -548,7 +536,7 @@ ai_bullet_spawn>
   pop r5
   rts
 
-playbul_spawn>
+playbul_spawn:
   push r5
   push r6
   push r3
@@ -646,7 +634,7 @@ ai_bullet_movement_end:
   rts
 
 
-movebul> 
+movebul:
   push r5
   push r4
   push r6
@@ -654,7 +642,7 @@ movebul>
   ldi r5, bull_1id
   ld r5, r6
   if
-    cmp r6, 10
+    cmp r6, 15
   is ne
     br end_movebul
   fi
@@ -665,7 +653,7 @@ movebul>
   if
     cmp r4, 58
   is ge
-    ldi r5,bull_1id
+    ldi r5, bull_1id
     ldi r6, 9
     st r5, r6
     br ai_bullet_movement_end
@@ -682,7 +670,7 @@ end_movebul:
   rts
 
 
-movebul2> 
+movebul2:
   push r5
   push r4
   push r6
@@ -690,7 +678,7 @@ movebul2>
   ldi r5, bull_2id
   ld r5, r6
   if
-    cmp r6, 10
+    cmp r6, 15
   is ne
     br end_movebul2
   fi
