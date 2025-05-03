@@ -83,12 +83,18 @@ main>
     st r5, r6
     ldi r5, bull_1y
     st r5, r6
+    ldi r5, bull_2x
+    st r5, r6
+    ldi r5, bull_2y
+    st r5, r6
     ldi r5, bullet_id_space
     ldi r6, 10
     st r5, r6
     ldi r5, playbul_id_space
     st r5, r6
     ldi r5, bull_1id
+    st r5, r6
+    ldi r5, bull_2id
     st r5, r6
 
     #Пропись хп
@@ -217,137 +223,78 @@ if
   ldi r2, 1
   st r5, r2
 fi
-# # Далее коллизия
-# ldi r5, bullet_id_space
-# ld r5, r6
-# if
-#   cmp r6, 9
-#   is eq
-#   ldi r5, y_space
-#   ld r5, r4
-#   add r4, 2
-#   ldi r5, bullet_y_space
-#   ld r5, r2
-#   sub r2, r4
-#   if
-#       cmp r4, 3
-#       is le
-#       if
-#           cmp r4, -1
-#           is ge
-#       ldi r5, bullet_x_space
-#       ld r5, r2
-#       sub r2, r3
-#       if
-#           cmp r3, -1
-#           is ge
-#           if
-#               cmp r3, 3
-#               is le
-#               ldi r5, collision
-#               ldi r4, 1
-#               st r5, r4
-#               ldi r4, 0
-#               st r5, r4
-#               ldi r5, bullet_id_space
-#               ldi r4, 10
-#               st r5, r4
-#               ldi r5, score
-#               ld r5, r4
-#               inc r4
-#               st r5, r4
-#               if
-#                 cmp r4, 15
-#                 is eq
-#                 ldi r5, win
-#                 ldi r4, 1
-#                 st r5, r4
-#               fi
-#               fi
-#           fi
-#       fi
-#   fi 
-# fi
-# ldi r5, playbul_id_space
-# ld r5, r6
-# if
-#   cmp r6, 9
-#   is eq
-#   ldi r5, y_space
-#   ld r5, r4
-#   ldi r5, playbul_y_space
-#   ld r5, r2
-#   sub r2, r4
-#   if
-#       cmp r4, 3
-#       is le
-#       if
-#           cmp r4, -1
-#           is ge
-#       ldi r5, playbul_x_space
-#       ld r5, r2
-#       sub r2, r3
-#       if
-#           cmp r3, -1
-#           is ge
-#           if
-#               cmp r3, 3
-#               is le
-#               ldi r5, collision
-#               ldi r4, 1
-#               st r5, r4
-#               ldi r4, 0
-#               st r5, r4
-#               ldi r5, playbul_id_space
-#               ldi r4, 10
-#               st r5, r4
-#               ldi r5, button
-#               ldi r4, 0
-#               st r5, r4
-#               ldi r5, score
-#               ld r5, r4
-#               inc r4
-#               st r5, r4
-#               if
-#                 cmp r4, 15
-#                 is eq
-#                 ldi r5, win
-#                 ldi r4, 1
-#                 st r5, r4
-#               fi
-#               fi
-#           fi
-#       fi
-#   fi 
-# fi
 
-# # Стрельба
-# #Проверка, существует ли пуля первого,второго,третьего и т.д врагов (макс 6)
-# ldi r5, bull_1id
-# ld r5, r6
-# if
-# cmp r6, 10
-# is eq
-#   ldi r5, rand
-#   ld r5, r6
-#   if
-#   cmp r6, 3
-#     is eq
-#     ldi r5, bull_1id
-#     ldi r6, 9
-#     st r5, r6
-#     ldi r5, x_space
-#     ld r5, r3
-#     add r3, 2
-#     ldi r5, bull_1x
-#     st r5, r3
-#     ldi r5, y_space
-#     ld r5, r4
-#     ldi r5, bull_1y
-#     st r5, r4
-#   fi
-# # else тут будет огромный пласт с проверкой последующих ячеек пуль
-# fi
+  #             ldi r5, playbul_id_space
+  #             ldi r4, 10
+  #             st r5, r4
+  #             ldi r5, score
+  #             ld r5, r4
+  #             inc r4
+  #             st r5, r4
+  #             if
+  #               cmp r4, 15
+  #               is eq
+  #               ldi r5, win
+  #               ldi r4, 1
+  #               st r5, r4
+  #             fi
+  #             fi
+  #         fi
+  #     fi
+  # fi 
+
+
+#Проверка, существует ли пуля первого,второго,третьего и т.д врагов (макс 6)
+ldi r5, bull_1id
+ld r5, r6
+if
+cmp r6, 10
+is eq
+  ldi r5, rand
+  ld r5, r6
+  if
+  cmp r6, 3
+    is eq
+    ldi r5, bull_1id
+    ldi r6, 9
+    st r5, r6
+    ldi r5, x_space
+    ld r5, r3
+    add r3, 2
+    ldi r5, bull_1x
+    st r5, r3
+    ldi r5, y_space
+    ld r5, r4
+    ldi r5, bull_1y
+    st r5, r4
+  fi
+# else тут будет огромный пласт с проверкой последующих ячеек пуль
+fi
+# Спавн пули второго врага
+ldi r5, bull_2id
+ld r5, r6
+if
+cmp r6, 10
+is eq
+  ldi r5, rand
+  ld r5, r6
+  if
+  cmp r6, 2        # Отдельное условие для второго врага
+    is eq
+    ldi r5, bull_2id
+    ldi r6, 9
+    st r5, r6
+    ldi r5, x_space
+    ld r5, r3
+    add r3, 2
+    ldi r5, bull_2x
+    st r5, r3
+    ldi r5, y_space
+    ld r5, r4
+    ldi r5, bull_2y
+    st r5, r4
+  fi
+fi
 pop r4
 pop r3
 pop r6
@@ -379,12 +326,43 @@ movement>
         pop r6
     rts
 
+macro DELETE_BULL/1
+  ldi r5, collision
+  ld r5, r6
+  if
+    cmp r6, 1
+  is eq
+    ldi r3, $0
+    ldi r6, 10
+    st r3, r6
+
+    ldi r3, score
+    ld r3, r6
+    inc r6
+    st r3, r6
+
+    if
+      cmp r6, 15
+    is ge
+      ldi r3, win
+      ldi r6, 1
+      st r3, r6
+    fi
+
+    ldi r6, 0
+    st r5, r6
+  fi
+mend
+
 otrisovka>
     push r4
     push r3
     push r5
     push r6
+
     jsr movement
+
+    # Отрисовка ИИ
     ldi r5, id_out_space 
     ldi r6, 1
     st r5, r6
@@ -401,6 +379,7 @@ otrisovka>
     st r5, r6
     ldi r6, 0
     st r5, r6
+
     #отрисовка пули ИИ
     ldi r5, bullet_id_space
     ld r5, r4
@@ -434,6 +413,9 @@ otrisovka>
     st r5, r6
     ldi r6, 0
     st r5, r6
+
+    DELETE_BULL bullet_id_space
+
     #Отрисовка пуль врагов
     ldi r5, bull_1id
     ld r5, r4
@@ -457,55 +439,38 @@ otrisovka>
     ldi r6, 1  
     st r5, r6
     ldi r6, 0
-    st r5, r6 
-        #проверка коллизии пули врагов. Замакросить, если будет работать.
-    ldi r5, bull_1id
-    ld r5, r6
-    if
-    cmp r6, 9
-      is eq
-      ldi r5, playy_space
-      ld r5, r3
-      ldi r5, bull_1y
-      ld r5, r4
-      sub r4, r3
-      if
-        cmp r3, 3
-        is le
-        if
-          cmp r3, -1
-          is ge
-          ldi r5, playx_space
-          ld r5, r3
-          ldi r5, bull_1x
-          ld r5, r4
-          sub r4, r3
-          if
-            cmp r3, 3
-            is le
-              if
-              cmp r3, -1
-              is ge
-              st r5, r4
-              ldi r5, bull_1id
-              ldi r6, 10
-              st r5, r6
-              ldi r5, hp
-              ld r5, r6
-              dec r6
-              st r5, r6
-              if
-                cmp r6, 0
-                is eq
-                ldi r5, gg
-                ldi r6, 1
-                st r5, r6
-              fi
-              fi
-          fi
-        fi
-      fi
-    fi
+    st r5, r6
+
+    DELETE_BULL bull_1id
+
+# Обработка второй пули врага
+ldi r5, bull_2id
+ld r5, r4
+if
+  cmp r4, 9
+  is eq
+  jsr movebul2      # Новая подпрограмма для движения
+fi
+
+# Отрисовка второй пули
+ldi r5, id_out_space
+st r5, r4
+ldi r5, bull_2x
+ld r5, r4
+ldi r5, x_out_space
+st r5, r4
+ldi r3, bull_2y
+ld r3, r4
+ldi r5, y_out_space
+st r5, r4
+ldi r5, command_space
+ldi r6, 1  
+st r5, r6
+ldi r6, 0
+st r5, r6
+
+DELETE_BULL bull_2id
+
     #Отрисовка пули игрока
     ldi r5, playbul_id_space
     ld r5, r4
@@ -520,6 +485,8 @@ otrisovka>
           cmp r4, 1
           is eq
           jsr playbul_spawn
+          ldi r4, 0
+          st r5, r4
         fi
     else
         jsr playbul_movement
@@ -535,6 +502,11 @@ otrisovka>
     ldi r5, command_space
     ldi r6, 1  
     st r5, r6
+
+    save r5
+    DELETE_BULL playbul_id_space
+    restore
+
     ldi r6, 2
     st r5, r6
     ldi r6, 0
@@ -706,6 +678,38 @@ end_movebul:
     pop r4
     pop r5
     rts
+
+movebul2> 
+    push r5
+    push r4
+    push r6
+
+    ldi r5, bull_2id
+    ld r5, r6
+    if
+        cmp r6, 9
+        is ne
+        br end_movebul2
+    fi
+    ldi r5, bull_2y
+    ld r5, r4
+    add r4, 2               
+    if
+        cmp r4, 58
+        is ge
+        ldi r5,bull_2id
+        ldi r6, 10          
+        st r5, r6
+        br end_movebul2
+    fi
+    ldi r5, bull_2y
+    st r5, r4
+end_movebul2:
+    pop r6
+    pop r4
+    pop r5
+    rts
+
 
 
 exception_handler>
