@@ -65,42 +65,40 @@ align 2
 macro DELETE_BULL/1
   ldi r5, collision
   ld r5, r6
+
   if
-    cmp r6, 1
-  is eq
+    cmp r6, 0
+  is ne
     if
-      ldi r3, $0
-      ld r3, r3
-      cmp r3, 10
+      cmp r6, 1
     is eq
-      ldi r3, score
+      ldi r3, hp
       ld r3, r6
-      inc r6
+      dec r6
       st r3, r6
+      if 
+        cmp r6, 0
+      is le
+        ldi r3, gg
+        ldi r6, 1
+        st r3, r6
+      fi
     else
       if
-        cmp r3, 15
+        cmp r6, 2
       is eq
-        ldi r3, hp
+        ldi r3, score
         ld r3, r6
-        dec r6
+        inc r6
         st r3, r6
-        if 
-          cmp r6, 0
-          is le
-          ldi r3, gg
+        if
+          cmp r6, 15
+        is ge
+          ldi r3, win
           ldi r6, 1
           st r3, r6
         fi
       fi
-    fi
-
-    if
-      cmp r6, 15
-    is ge
-      ldi r3, win
-      ldi r6, 1
-      st r3, r6
     fi
 
     ldi r3, $0
