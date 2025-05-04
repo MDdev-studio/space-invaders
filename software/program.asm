@@ -61,6 +61,51 @@ bull_2y: dc 0 #bc
 
 align 2
 
+
+macro DELETE_BULL/1
+  ldi r5, collision
+  ld r5, r6
+  if
+    cmp r6, 1
+  is eq
+    if
+      ldi r3, $0
+      ld r3, r3
+      cmp r3, 10
+    is eq
+      ldi r3, score
+      ld r3, r6
+      inc r6
+      st r3, r6
+    else
+      if
+        cmp r3, 15
+      is eq
+        ldi r3, hp
+        ld r3, r6
+        dec r6
+        st r3, r6
+      fi
+    fi
+
+    if
+      cmp r6, 15
+    is ge
+      ldi r3, win
+      ldi r6, 1
+      st r3, r6
+    fi
+
+    ldi r3, $0
+    ldi r6, 9
+    st r3, r6
+
+    ldi r6, 0
+    st r5, r6
+  fi
+mend
+
+
 main>
   # Инициализация программы
   ldi r5, score
@@ -305,34 +350,6 @@ movement>
   pop r6
   rts
 
-macro DELETE_BULL/1
-  ldi r5, collision
-  ld r5, r6
-  if
-    cmp r6, 1
-  is eq
-    ldi r3, $0
-    ldi r6, 9
-    st r3, r6
-
-    ldi r3, score
-    ld r3, r6
-    inc r6
-    st r3, r6
-
-    if
-      cmp r6, 15
-    is ge
-      ldi r3, win
-      ldi r6, 1
-      st r3, r6
-    fi
-
-    ldi r6, 0
-    st r5, r6
-  fi
-mend
-
 draw>
   jsr movement
 
@@ -499,16 +516,6 @@ draw>
     ldi r4, 0
     st r5, r4
   fi
-
-  #Возможно сломает всю логику ИИ, но попробовать надо
-  # if 
-  #   cmp r4, 0
-  #   is eq
-  #    ldi r1, 100
-  #    ldi r4, 1
-  #    st r5, r4
-  #  fi
-  #уберём если что
   
   rts
 
