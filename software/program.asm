@@ -85,6 +85,13 @@ macro DELETE_BULL/1
         ld r3, r6
         dec r6
         st r3, r6
+        if 
+          cmp r6, 0
+          is le
+          ldi r3, gg
+          ldi r6, 1
+          st r3, r6
+        fi
       fi
     fi
 
@@ -292,7 +299,6 @@ scan_enemies>
       ldi r5, bull_1y
       st r5, r4
     fi
-  # else тут будет огромный пласт с проверкой последующих ячеек пуль
   fi
 
   # Спавн пули второго врага
@@ -502,7 +508,6 @@ draw>
   save r5
   DELETE_BULL playbul_id_space
   restore
-
   ldi r6, 2
   st r5, r6
   ldi r6, 0
@@ -663,7 +668,7 @@ movebul:
     ldi r5, bull_1id
     ldi r6, 9
     st r5, r6
-    br ai_bullet_movement_end
+    br end_movebul
   fi
 
   ldi r5, bull_1y
