@@ -292,7 +292,6 @@ scan_enemies>
       ldi r5, bull_1y
       st r5, r4
     fi
-  # else тут будет огромный пласт с проверкой последующих ячеек пуль
   fi
 
   # Спавн пули второго врага
@@ -502,11 +501,19 @@ draw>
   save r5
   DELETE_BULL playbul_id_space
   restore
-
   ldi r6, 2
   st r5, r6
   ldi r6, 0
   st r5, r6
+  ldi r5, hp
+  ld r5, r6
+  if
+    cmp r6, 0
+    is eq
+    ldi r5, gg
+    ldi r6, 1
+    st r5, r6
+  fi
   ldi r5, vec
   ld r5, r4
   if 
