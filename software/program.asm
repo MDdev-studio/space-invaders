@@ -503,9 +503,9 @@ draw>
   ldi r6, 1
   st r5, r6
 
-  save r5
   DELETE_BULL playbul_id_space
-  restore
+
+  ldi r5, command_space
   ldi r6, 2
   st r5, r6
   ldi r6, 0
