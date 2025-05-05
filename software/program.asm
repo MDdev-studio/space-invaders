@@ -498,16 +498,7 @@ draw>
   st r5, r6
   ldi r6, 0
   st r5, r6
-  ldi r5, vec
-  ld r5, r4
-  if 
-    cmp r4, 1
-  is eq
-    ldi r1, 100
-    ldi r4, 0
-    st r5, r4
-  fi
-  
+  ldi r1, 100
   rts
 
 ai_bullet_spawn:
