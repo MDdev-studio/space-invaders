@@ -251,7 +251,7 @@ fi
   ldi r5, y_space
   ld r5, r4
   if
-    cmp r4, 50
+    cmp r4, 44
   is ge
     ldi r5, gg
     ldi r2, 1
