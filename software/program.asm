@@ -63,6 +63,10 @@ align 2
 
 
 macro DELETE_BULL/1
+  nop
+  nop
+  nop
+  nop
   ldi r5, collision
   ld r5, r6
 
@@ -408,10 +412,10 @@ draw>
   ldi r5, command_space
   ldi r6, 1
   st r5, r6
+  DELETE_BULL bullet_id_space
+  ldi r5, command_space
   ldi r6, 0
   st r5, r6
-
-  DELETE_BULL bullet_id_space
 
   #Отрисовка пуль врагов
   ldi r5, bull_1id
@@ -436,10 +440,11 @@ draw>
   ldi r5, command_space
   ldi r6, 1
   st r5, r6
+  DELETE_BULL bull_1id
+  ldi r5, command_space
   ldi r6, 0
   st r5, r6
-
-  DELETE_BULL bull_1id
+  
 
   # Обработка второй пули врага
   ldi r5, bull_2id
@@ -464,10 +469,12 @@ draw>
   ldi r5, command_space
   ldi r6, 1
   st r5, r6
+  DELETE_BULL bull_2id
+  ldi r5, command_space
   ldi r6, 0
   st r5, r6
 
-  DELETE_BULL bull_2id
+  
 
   #Отрисовка пули игрока
   ldi r5, playbul_id_space
