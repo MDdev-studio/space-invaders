@@ -59,6 +59,8 @@ bull_2id: dc 0 #b8
 bull_2x: dc 0 #ba
 bull_2y: dc 0 #bc
 
+nearestx: dc 0 #be
+
 align 2
 
 
@@ -204,32 +206,38 @@ scan_enemies>
   ldi r5, command_space
   ldi r6, 0
   st r5, r6
-
-  ldi r5, x_space
+ ldi r5, x_space
   ld r5, r3
+  ldi r5, y_space
+  ld r5, r4
+  sub r0, r3
+  ldi r7, 56
+  sub r7, r4  
 
-sub r0, r3         
-#abs(r3)
-move r3, r7
-shra r7, 8
-shra r7, 7
-xor r7, r3, r5
-sub r5, r7
-move r7, r5
+    #abs(r3)
+  move r3, r7
+  shra r7, 8
+  shra r7, 7
+  xor r7, r3, r5
+  sub r5, r7
+  move r7, r5
 
-# abs(r1)
-move r1, r6
-shra r6, 8
-shra r6, 7
-xor r6, r1, r7
-sub r7, r6
-
-# Сравниваем
-if
-cmp r5, r6
-is le                
-move r3, r1 
-fi
+  # abs(r4)
+  move r4, r6
+  shra r6, 8
+  shra r6, 7
+  xor r6, r4, r7
+  sub r7, r6
+  add r5, r6, r7
+  if
+    cmp r7, r1
+    is lt
+    move r7, r1
+    ldi r5, x_space
+    ld r5, r3
+    ldi r5, nearestx
+    st r5, r3
+  fi
 
   ld r5, r3
   if 
@@ -314,28 +322,32 @@ fi
 
 movement>
   push r6
+  push r5
+  ldi r5, nearestx
+  ld r5, r5
   if
-    cmp r1, 0
+    cmp r5, r0
   is eq
+    pop r5
     pop r6
     rts
   fi
 
   if
-    cmp r1, 0
-  is gt
-    ldi r6, 1
+    cmp r5, r0
+  is lt
+    ldi r6, 2
     sub r0, r6
     move r6, r0
   fi
 
   if
-    cmp r1, 0
-  is lt
-    ldi r6, 1
+    cmp r5, r0
+  is gt
+    ldi r6, 2
     add r6, r0 
   fi
-
+  pop r5
   pop r6
   rts
 
@@ -365,15 +377,19 @@ draw>
   ld r5, r4
   ldi r5, id_out_space
   st r5, r4
-
-  if
+  ldi r5, id_out_space
+  st r5, r4
+    if
     cmp r4, 10
   is ne
+  ldi r5, nearestx
+  ld r5, r5
+  sub r5, r0, r5
     if
-      cmp r1, 1
+      cmp r5, 1
     is le
       if
-        cmp r1, -1
+        cmp r5, -1
       is ge
         jsr ai_bullet_spawn
       fi
