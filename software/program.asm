@@ -60,11 +60,11 @@ bull_2x: dc 0 #ba
 bull_2y: dc 0 #bc
 
 #Predicting
-nearestx: dc 0 #be
-nearesty: dc 0 #c0
-predictx: dc 0 #c2
-ismove: dc 0 #c4
-shot: dc 0 #c6
+  nearestx: dc 0 #be
+  nearesty: dc 0 #c0
+  predictx: dc 0 #c2
+  ismove: dc 0 #c4
+  shot: dc 0 #c6
 
 align 2
 
@@ -368,7 +368,7 @@ predicting>
     #Calculating the position when moving to the right
     ldi r5, 64      #The right border
     sub r5, r2, r5   #Remaining distance to the wall
-    ldi r6, 3
+    ldi r6, 2
     sub r5, r6, r5    
     
     if
@@ -389,7 +389,7 @@ predicting>
       sub r2, r7, r6
     else
       sub r7, r2, r2
-      ldi r6, 3      
+      ldi r6, 2      
       add r6, r2, r6
     fi
   fi
