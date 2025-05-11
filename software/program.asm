@@ -126,8 +126,6 @@ main>
   ldi r5, score
   ldi r6, 0
   st r5, r6
-  ldi r5, ismove
-  st r5, r6
 
   # The initial position of the bullets
   ldi r6, -1
