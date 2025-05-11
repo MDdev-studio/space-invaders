@@ -393,7 +393,7 @@ predicting>
 
   #Saving the result
   ldi r5, predictx
-  add r6, 2
+  add r6, 1
   st r5, r6
   ldi r1, 100
 
@@ -480,8 +480,8 @@ draw>
                     ldi r5, shot
                     ldi r6, 0
                     st r5, r6
+                    jsr ai_bullet_spawn
                   fi
-              jsr ai_bullet_spawn
             else
               jsr ai_bullet_movement
     fi
