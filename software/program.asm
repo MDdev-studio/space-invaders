@@ -63,8 +63,7 @@ bull_2y: dc 0 #bc
   nearestx: dc 0 #be
   nearesty: dc 0 #c0
   predictx: dc 0 #c2
-  ismove: dc 0 #c4
-  shot: dc 0 #c6
+  shot: dc 0 #c4
 
 align 2
 
@@ -414,7 +413,6 @@ movement>
   
 
   
-  #If already in motion (ismove = 1)
   ldi r5, predictx
   ld r5, r5             #Loading the target position
   
