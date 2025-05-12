@@ -11,23 +11,23 @@ dc exception_handler, 4
 align 0x0080
 
 rsect main
-# Запись
+# Recording
 x_space: dc 0         # x80
 y_space: dc 0         # x82
 checker: dc 0         # x84
-# Отрисовка
+# Draw
 id_out_space: dc 0    # x86
 x_out_space: dc 0     # x88
 y_out_space: dc 0     # x8a
 command_space: dc 0   # x8c
-# Просто пуля
+# Ai_bullet
 bullet_id_space: dc 0 # x8e
 bullet_x_space: dc 0  # x90
 bullet_y_space: dc 0  # x92
-# Флаг коллизии
+# Collision flag
 collision: dc 0       # x94
 
-#Технические моменты
+#Technical moments
 run: dc 0             # x96
 speed: dc 0           # x98
 vec: dc 0 #9a
@@ -35,23 +35,23 @@ gg: dc 0 #9c
 score: dc 0 #9e
 button: dc 0 #a0
 
-#Игрок и его пуля
+#Player and his bullet
 playbul_id_space: dc 0 #a2
 playbul_x_space: dc 0 #a4
 playbul_y_space: dc 0 #a6
 playx_space: dc 0 #a8
 playy_space: dc 0 #aa
 
-#Стрельба врагов
+#Enemies' shooting
 rand: dc 0 #ac
 
-#Победа
+#Win
 win: dc 0 #ae
 
-#ХПШКИ
+#HP
 hp: dc 0 #b0
 
-#Пули врагов
+#Enemies' bullets
 bull_1id: dc 0 #b2
 bull_1x: dc 0 #b4
 bull_1y: dc 0 #b6
@@ -59,7 +59,11 @@ bull_2id: dc 0 #b8
 bull_2x: dc 0 #ba
 bull_2y: dc 0 #bc
 
-nearestx: dc 0 #be
+#Predicting
+  nearestx: dc 0 #be
+  nearesty: dc 0 #c0
+  predictx: dc 0 #c2
+  shot: dc 0 #c4
 
 align 2
 
@@ -118,12 +122,12 @@ mend
 
 
 main>
-  # Инициализация программы
+  # Program initialization
   ldi r5, score
   ldi r6, 0
   st r5, r6
 
-  # Начальная позиция пуль
+  # The initial position of the bullets
   ldi r6, -1
   ldi r5, bullet_x_space
   st r5, r6
@@ -142,7 +146,7 @@ main>
   ldi r5, bull_2y
   st r5, r6
 
-  # Начальный id пуль (скрытие)
+  # Initial id of bullets (hiding)
   ldi r6, 9
   ldi r5, bullet_id_space
   st r5, r6
@@ -153,13 +157,17 @@ main>
   ldi r5, bull_2id
   st r5, r6
 
-  # Начальное значение жизней
+  # The initial value of HP
   ldi r5, hp
   ldi r6, 3
   st r5, r6
     
-  ldi r0, 56 #положение корабля. не трогаем
-  ldi r1, 100 #расстояние. не трогаем
+  ldi r0, 56 #the position of the AI ship.
+  ldi r1, 100 #Nearest distance
+
+  ldi r5, vec #the initial vector of enemy movement.
+  ldi r4, 0 #0 - right; 1 - left
+  st r5, r4
 
   ldi r5, id_out_space 
   ldi r6, 1
@@ -172,7 +180,7 @@ main>
   ldi r6, 56
   st r5, r6
 
-  # Запуск аппаратной части
+  # Hardware Startup
   ldi r5, run
   ldi r6, 1
   st r5, r6
@@ -237,14 +245,23 @@ scan_enemies>
     ld r5, r3
     ldi r5, nearestx
     st r5, r3
+    ldi r5, y_space
+    ld r5, r3
+    ldi r5, nearesty
+    st r5, r3
+    jsr predicting
   fi
 
+  ldi r5, x_space
   ld r5, r3
   if 
-    cmp r3, 61
+    cmp r3, 59
   is eq
     ldi r5, vec
     ldi r4, 1
+    st r5, r4
+    ldi r5, predictx
+    ldi r4, 0
     st r5, r4
   fi
 
@@ -252,7 +269,9 @@ scan_enemies>
     cmp r3, 1
   is eq
     ldi r5, vec
-    ldi r4, 1
+    ldi r4, 0
+    st r5, r4
+    ldi r5, predictx
     st r5, r4
   fi
 
@@ -266,7 +285,7 @@ scan_enemies>
     st r5, r2
   fi
 
-  #Проверка, существует ли пуля первого,второго,третьего и т.д врагов (макс 6)
+  #Checking if the bullet of the first,second enemies exists
   ldi r5, bull_1id
   ld r5, r6
   if
@@ -292,7 +311,7 @@ scan_enemies>
     fi
   fi
 
-  # Спавн пули второго врага
+  #Spawn the bullets of the second enemy
   ldi r5, bull_2id
   ld r5, r6
   if
@@ -301,7 +320,7 @@ scan_enemies>
     ldi r5, rand
     ld r5, r6
     if
-      cmp r6, 2        # Отдельное условие для второго врага
+      cmp r6, 2     
     is eq
       ldi r5, bull_2id
       ldi r6, 15
@@ -320,33 +339,104 @@ scan_enemies>
 
   rts
 
+predicting>
+  push r7 #t
+  push r6  #x, where AI will need to move to
+  push r5  
+  push r2 #s
+
+  # We always get the latest coordinates of the nearest enemy
+  ldi r5, nearestx
+  ld r5, r2
+  ldi r5, nearesty
+  ld r5, r5
+
+  #Calculating the bullet flight time (56 - y_coord)
+  ldi r7, 56
+  sub r7, r5, r7
+
+  #Determining the current direction of movement of the enemies
+  ldi r5, vec
+  ld r5, r5
+  
+  if
+    cmp r5, 0 
+    is eq # moving to the right
+    #Calculating the position when moving to the right
+    ldi r5, 64      #The right border
+    sub r5, r2, r5   #Remaining distance to the wall
+    ldi r6, 2
+    sub r5, r6, r5    
+    
+    if
+      cmp r7, r5
+      is le #If the enemy doesn't have time to turn around
+      add r2, r7, r6 #prediction with the current direction
+    else
+      #If the Enemy turns around
+      sub r7, r5, r2 #remaining distance after reversal
+      ldi r6, 61     #the starting point after the reversal (64-3)
+      sub r6, r2, r6 # new predicted position
+    fi
+  else #Moving to the left
+    #Similar logic for moving to the left
+    if
+      cmp r7, r2
+      is le # If the enemy doesn't have time to turn around
+      sub r2, r7, r6
+    else
+      sub r7, r2, r2
+      ldi r6, 2      
+      add r6, r2, r6
+    fi
+  fi
+
+  #Saving the result
+  ldi r5, predictx
+  add r6, 1
+  st r5, r6
+  ldi r1, 100
+
+  pop r2
+  pop r5
+  pop r6
+  pop r7
+  rts
+
 movement>
   push r6
   push r5
-  ldi r5, nearestx
-  ld r5, r5
+  push r4
+  
+  
+
+  
+  ldi r5, predictx
+  ld r5, r5             #Loading the target position
+  
   if
     cmp r5, r0
-  is eq
-    pop r5
-    pop r6
-    rts
+    is lt               #If the target is on the left
+    sub r0, 2           #Moving to the left
+  fi
+  
+  if
+    cmp r5, r0
+    is gt               #If the target is on the right
+    add r0, 2           #Moving to the right
+  fi
+  
+  if
+    cmp r5, r0
+    is eq               #If you have reached the goal
+    ldi r5, shot
+    ldi r6, 1
+    st r5, r6           #Setting the shooting flag
+    
   fi
 
-  if
-    cmp r5, r0
-  is lt
-    ldi r6, 2
-    sub r0, r6
-    move r6, r0
-  fi
-
-  if
-    cmp r5, r0
-  is gt
-    ldi r6, 2
-    add r6, r0 
-  fi
+movement_end:
+  pop r4
   pop r5
   pop r6
   rts
@@ -354,7 +444,7 @@ movement>
 draw>
   jsr movement
 
-  # Отрисовка ИИ
+  #Drawing AI
   ldi r5, id_out_space 
   ldi r6, 1
   st r5, r6
@@ -372,32 +462,30 @@ draw>
   ldi r6, 0
   st r5, r6
 
-  #отрисовка пули ИИ
+  #drawing an AI bullet
   ldi r5, bullet_id_space
   ld r5, r4
   ldi r5, id_out_space
   st r5, r4
-  ldi r5, id_out_space
-  st r5, r4
-    if
-    cmp r4, 10
-  is ne
-  ldi r5, nearestx
-  ld r5, r5
-  sub r5, r0, r5
-    if
-      cmp r5, 1
-    is le
-      if
-        cmp r5, -1
-      is ge
-        jsr ai_bullet_spawn
-      fi
+  ldi r5, bullet_id_space
+    ld r5, r4
+        if
+          cmp r4, 10
+            is ne
+                ldi r5, shot
+                  ld r5, r6
+                  if
+                    cmp r6, 1
+                    is eq
+                    ldi r5, shot
+                    ldi r6, 0
+                    st r5, r6
+                    jsr ai_bullet_spawn
+                  fi
+            else
+              jsr ai_bullet_movement
     fi
-  else
-    jsr ai_bullet_movement
-  fi
-
+  
   ldi r3, bullet_x_space
   ld r3, r4
   ldi r5, x_out_space
@@ -414,7 +502,7 @@ draw>
   ldi r6, 0
   st r5, r6
 
-  #Отрисовка пуль врагов
+  #Drawing the first enemy bullet
   ldi r5, bull_1id
   ld r5, r4
   if
@@ -443,16 +531,16 @@ draw>
   st r5, r6
   
 
-  # Обработка второй пули врага
+  # Processing the enemy's second bullet
   ldi r5, bull_2id
   ld r5, r4
   if
     cmp r4, 15
   is eq
-    jsr movebul2      # Новая подпрограмма для движения
+    jsr movebul2  
   fi
 
-  # Отрисовка второй пули
+  #Drawing the second bullet
   ldi r5, id_out_space
   st r5, r4
   ldi r5, bull_2x
@@ -473,7 +561,7 @@ draw>
 
   
 
-  #Отрисовка пули игрока
+  #Drawing the player's bullet
   ldi r5, playbul_id_space
   ld r5, r4
   ldi r5, id_out_space
@@ -514,7 +602,6 @@ draw>
   st r5, r6
   ldi r6, 0
   st r5, r6
-  ldi r1, 100
   rts
 
 ai_bullet_spawn:
@@ -582,7 +669,7 @@ playbul_movement:
 
   ldi r5, playbul_y_space
   ld r5, r4
-  sub r4, 4         
+  sub r4, 2         
   if
     cmp r4, 0
   is lt
@@ -618,7 +705,7 @@ ai_bullet_movement:
 
   ldi r5, bullet_y_space
   ld r5, r4
-  sub r4, 4
+  sub r4, 2
   if
     cmp r4, 0
   is lt
