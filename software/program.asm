@@ -499,109 +499,11 @@ draw>
   st r5, r6
   DELETE_BULL bullet_id_space
   ldi r5, command_space
-  ldi r6, 0
-  st r5, r6
-
-  #Drawing the first enemy bullet
-  ldi r5, bull_1id
-  ld r5, r4
-  if
-    cmp r4, 15
-  is eq
-    jsr movebul
-  fi
-
-  ldi r5, id_out_space
-  st r5, r4
-
-  ldi r5, bull_1x
-  ld r5, r4
-  ldi r5, x_out_space
-  st r5, r4
-  ldi r3, bull_1y
-  ld r3, r4
-  ldi r5, y_out_space
-  st r5, r4 
-  ldi r5, command_space
-  ldi r6, 1
-  st r5, r6
-  DELETE_BULL bull_1id
-  ldi r5, command_space
-  ldi r6, 0
-  st r5, r6
-  
-
-  # Processing the enemy's second bullet
-  ldi r5, bull_2id
-  ld r5, r4
-  if
-    cmp r4, 15
-  is eq
-    jsr movebul2  
-  fi
-
-  #Drawing the second bullet
-  ldi r5, id_out_space
-  st r5, r4
-  ldi r5, bull_2x
-  ld r5, r4
-  ldi r5, x_out_space
-  st r5, r4
-  ldi r3, bull_2y
-  ld r3, r4
-  ldi r5, y_out_space
-  st r5, r4
-  ldi r5, command_space
-  ldi r6, 1
-  st r5, r6
-  DELETE_BULL bull_2id
-  ldi r5, command_space
-  ldi r6, 0
-  st r5, r6
-
-  
-
-  #Drawing the player's bullet
-  ldi r5, playbul_id_space
-  ld r5, r4
-  ldi r5, id_out_space
-  st r5, r4
-
-  if
-    cmp r4, 10
-  is ne
-    ldi r5, button
-    ld r5, r4
-    if
-      cmp r4, 1
-    is eq
-      jsr playbul_spawn
-      ldi r4, 0
-      st r5, r4
-    fi
-  else
-    jsr playbul_movement
-  fi
-
-  ldi r3, playbul_x_space
-  ld r3, r4
-  ldi r5, x_out_space
-  st r5, r4
-  ldi r3, playbul_y_space
-  ld r3, r4
-  ldi r5, y_out_space
-  st r5, r4
-  ldi r5, command_space
-  ldi r6, 1
-  st r5, r6
-
-  DELETE_BULL playbul_id_space
-
-  ldi r5, command_space
   ldi r6, 2
   st r5, r6
   ldi r6, 0
   st r5, r6
+
   rts
 
 ai_bullet_spawn:
@@ -625,67 +527,6 @@ ai_bullet_spawn:
 
   pop r3
   pop r6
-  pop r5
-  rts
-
-playbul_spawn:
-  push r5
-  push r6
-  push r3
-
-  ldi r5, playbul_id_space
-  ldi r6, 10
-  st r5, r6
-
-  ldi r5, playx_space
-  ld r5, r3
-  add r3, 2
-  ldi r5, playbul_x_space
-  st r5, r3
-
-  ldi r5, playy_space
-  ld r5, r3
-  ldi r5, playbul_y_space
-  st r5, r3
-
-  pop r3
-  pop r6
-  pop r5
-  rts
-
-
-playbul_movement:
-  push r5
-  push r4
-  push r6
-
-  ldi r5, playbul_id_space
-  ld r5, r6
-  if
-    cmp r6, 10
-  is ne
-    br playbul_movement_end
-  fi
-
-  ldi r5, playbul_y_space
-  ld r5, r4
-  sub r4, 2         
-  if
-    cmp r4, 0
-  is lt
-    ldi r5, playbul_id_space
-    ldi r6, 9      
-    st r5, r6
-    br playbul_movement_end
-  fi
-
-  ldi r5, playbul_y_space
-  st r5, r4
-
-
-playbul_movement_end:
-  pop r6
-  pop r4
   pop r5
   rts
 
@@ -724,79 +565,6 @@ ai_bullet_movement_end:
   pop r4
   pop r5
   rts
-
-
-movebul:
-  push r5
-  push r4
-  push r6
-
-  ldi r5, bull_1id
-  ld r5, r6
-  if
-    cmp r6, 15
-  is ne
-    br end_movebul
-  fi
-
-  ldi r5, bull_1y
-  ld r5, r4
-  add r4, 2
-  if
-    cmp r4, 58
-  is ge
-    ldi r5, bull_1id
-    ldi r6, 9
-    st r5, r6
-    br end_movebul
-  fi
-
-  ldi r5, bull_1y
-  st r5, r4
-
-
-end_movebul:
-  pop r6
-  pop r4
-  pop r5
-  rts
-
-
-movebul2:
-  push r5
-  push r4
-  push r6
-
-  ldi r5, bull_2id
-  ld r5, r6
-  if
-    cmp r6, 15
-  is ne
-    br end_movebul2
-  fi
-
-  ldi r5, bull_2y
-  ld r5, r4
-  add r4, 2
-  if
-    cmp r4, 58
-  is ge
-    ldi r5,bull_2id
-    ldi r6, 9
-    st r5, r6
-    br end_movebul2
-  fi
-
-  ldi r5, bull_2y
-  st r5, r4
-
-
-end_movebul2:
-  pop r6
-  pop r4
-  pop r5
-  rts
-
 
 exception_handler>
   halt
