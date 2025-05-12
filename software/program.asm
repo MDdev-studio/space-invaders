@@ -427,7 +427,7 @@ predicting>
 
   #Saving the result
   ldi r5, predictx
-  add r6, 1
+  add r6, 2
   st r5, r6
   ldi r1, 100
 
