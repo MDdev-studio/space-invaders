@@ -175,7 +175,7 @@ The game rules differs from classic **1978 "Space Invaders"**. Firstly there is 
 
 All project files are accessible in git repository on GitHub. Layout for software and hardware parts is as described in corresponding sections [4.1](#software-requirements) and [3.3](#hardware-requirements). 
 
-All documentations files (including this specification) are available in `docs` directory.
+All documentations files (including this specification) are available in `doc` directory.
 
 \newpage
 
