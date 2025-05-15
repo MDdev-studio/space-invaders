@@ -1,4 +1,6 @@
-all: spec.pdf
+all: spec
+
+spec: spec.pdf
 
 spec.pdf: spec.md
 	pandoc spec.md \
@@ -7,3 +9,5 @@ spec.pdf: spec.md
 		--output=spec.pdf \
 		--pdf-engine=xelatex
 
+clean:
+	rm -f *.pdf
