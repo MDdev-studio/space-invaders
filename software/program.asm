@@ -31,7 +31,7 @@ collision: dc 0       # x94
 run: dc 0             # x96
 speed: dc 0           # x98
 vec: dc 0 #9a
-gg: dc 0 #9c
+lose: dc 0 #9c
 score: dc 0 #9e
 button: dc 0 #a0
 
@@ -65,21 +65,26 @@ bull_2y: dc 0 #bc
   predictx: dc 0 #c2
   shot: dc 0 #c4
 
+# score
+player_score: dc 0 #C6
+ai_score: dc 0 #C8
+
 align 2
 
-
 macro DELETE_BULL/1
+  # waiting hardware response
   nop
   nop
   nop
   nop
+
   ldi r5, collision
   ld r5, r6
 
-  if
+  if # 0 = no collision; else = collision
     cmp r6, 0
   is ne
-    if
+    if # 1 = collsion with player
       cmp r6, 1
     is eq
       ldi r3, hp
@@ -89,24 +94,53 @@ macro DELETE_BULL/1
       if 
         cmp r6, 0
       is le
-        ldi r3, gg
+        ldi r3, lose
         ldi r6, 1
         st r3, r6
       fi
     else
-      if
+      if # 2 = collsion with enemy
         cmp r6, 2
       is eq
         ldi r3, score
         ld r3, r6
         inc r6
         st r3, r6
-        if
+
+        if # check who own the bullet
+          ldi r4, $0
+          ld r4, r4
+          cmp r4, 20
+        is eq
+          ldi r3, ai_score
+          ld r3, r4
+          inc r4
+          st r3, r4
+        else
+          ldi r3, player_score
+          ld r3, r4
+          inc r4
+          st r3, r4
+        fi
+
+        if # check win or lose
           cmp r6, 15
         is ge
-          ldi r3, win
-          ldi r6, 1
-          st r3, r6
+          ldi r3, player_score
+          ld r3, r3
+          ldi r4, ai_score
+          ld r4, r4
+          if
+            cmp r3, r4
+          is gt
+            ldi r3, win
+            ldi r6, 1
+            st r3, r6
+          else
+            ldi r3, lose
+            ldi r6, 1
+            st r3, r6
+          fi
         fi
       fi
     fi
@@ -280,7 +314,7 @@ scan_enemies>
   if
     cmp r4, 44
   is ge
-    ldi r5, gg
+    ldi r5, lose
     ldi r2, 1
     st r5, r2
   fi
@@ -393,7 +427,7 @@ predicting>
 
   #Saving the result
   ldi r5, predictx
-  add r6, 1
+  add r6, 2
   st r5, r6
   ldi r1, 100
 
@@ -470,7 +504,7 @@ draw>
   ldi r5, bullet_id_space
     ld r5, r4
         if
-          cmp r4, 10
+          cmp r4, 20
             is ne
                 ldi r5, shot
                   ld r5, r6
@@ -499,20 +533,119 @@ draw>
   st r5, r6
   DELETE_BULL bullet_id_space
   ldi r5, command_space
+  ldi r6, 0
+  st r5, r6
+
+  #Drawing the first enemy bullet
+  ldi r5, bull_1id
+  ld r5, r4
+  if
+    cmp r4, 15
+  is eq
+    jsr movebul
+  fi
+
+  ldi r5, id_out_space
+  st r5, r4
+
+  ldi r5, bull_1x
+  ld r5, r4
+  ldi r5, x_out_space
+  st r5, r4
+  ldi r3, bull_1y
+  ld r3, r4
+  ldi r5, y_out_space
+  st r5, r4 
+  ldi r5, command_space
+  ldi r6, 1
+  st r5, r6
+  DELETE_BULL bull_1id
+  ldi r5, command_space
+  ldi r6, 0
+  st r5, r6
+  
+
+  # Processing the enemy's second bullet
+  ldi r5, bull_2id
+  ld r5, r4
+  if
+    cmp r4, 15
+  is eq
+    jsr movebul2  
+  fi
+
+  #Drawing the second bullet
+  ldi r5, id_out_space
+  st r5, r4
+  ldi r5, bull_2x
+  ld r5, r4
+  ldi r5, x_out_space
+  st r5, r4
+  ldi r3, bull_2y
+  ld r3, r4
+  ldi r5, y_out_space
+  st r5, r4
+  ldi r5, command_space
+  ldi r6, 1
+  st r5, r6
+  DELETE_BULL bull_2id
+  ldi r5, command_space
+  ldi r6, 0
+  st r5, r6
+
+  
+
+  #Drawing the player's bullet
+  ldi r5, playbul_id_space
+  ld r5, r4
+  ldi r5, id_out_space
+  st r5, r4
+
+  if
+    cmp r4, 10
+  is ne
+    ldi r5, button
+    ld r5, r4
+    if
+      cmp r4, 1
+    is eq
+      jsr playbul_spawn
+      ldi r4, 0
+      st r5, r4
+    fi
+  else
+    jsr playbul_movement
+  fi
+
+  ldi r3, playbul_x_space
+  ld r3, r4
+  ldi r5, x_out_space
+  st r5, r4
+  ldi r3, playbul_y_space
+  ld r3, r4
+  ldi r5, y_out_space
+  st r5, r4
+  ldi r5, command_space
+  ldi r6, 1
+  st r5, r6
+
+  DELETE_BULL playbul_id_space
+
+  ldi r5, command_space
   ldi r6, 2
   st r5, r6
   ldi r6, 0
   st r5, r6
-
   rts
 
+# AI bullet functions
 ai_bullet_spawn:
   push r5
   push r6
   push r3
 
   ldi r5, bullet_id_space
-  ldi r6, 10
+  ldi r6, 20
   st r5, r6
 
   ldi r5, x_out_space
@@ -530,7 +663,6 @@ ai_bullet_spawn:
   pop r5
   rts
 
-
 ai_bullet_movement:
   push r5
   push r4
@@ -539,7 +671,7 @@ ai_bullet_movement:
   ldi r5, bullet_id_space
   ld r5, r6
   if
-    cmp r6, 10
+    cmp r6, 20
   is ne
     br ai_bullet_movement_end
   fi
@@ -559,12 +691,144 @@ ai_bullet_movement:
   ldi r5, bullet_y_space
   st r5, r4
 
-
 ai_bullet_movement_end:
   pop r6
   pop r4
   pop r5
   rts
+
+# Player bullet functions
+playbul_spawn:
+  push r5
+  push r6
+  push r3
+
+  ldi r5, playbul_id_space
+  ldi r6, 10
+  st r5, r6
+
+  ldi r5, playx_space
+  ld r5, r3
+  add r3, 2
+  ldi r5, playbul_x_space
+  st r5, r3
+
+  ldi r5, playy_space
+  ld r5, r3
+  ldi r5, playbul_y_space
+  st r5, r3
+
+  pop r3
+  pop r6
+  pop r5
+  rts
+
+playbul_movement:
+  push r5
+  push r4
+  push r6
+
+  ldi r5, playbul_id_space
+  ld r5, r6
+  if
+    cmp r6, 10
+  is ne
+    br playbul_movement_end
+  fi
+
+  ldi r5, playbul_y_space
+  ld r5, r4
+  sub r4, 2         
+  if
+    cmp r4, 0
+  is lt
+    ldi r5, playbul_id_space
+    ldi r6, 9      
+    st r5, r6
+    br playbul_movement_end
+  fi
+
+  ldi r5, playbul_y_space
+  st r5, r4
+
+playbul_movement_end:
+  pop r6
+  pop r4
+  pop r5
+  rts
+
+# Enemy 1 bullet functions
+movebul:
+  push r5
+  push r4
+  push r6
+
+  ldi r5, bull_1id
+  ld r5, r6
+  if
+    cmp r6, 15
+  is ne
+    br end_movebul
+  fi
+
+  ldi r5, bull_1y
+  ld r5, r4
+  add r4, 2
+  if
+    cmp r4, 58
+  is ge
+    ldi r5, bull_1id
+    ldi r6, 9
+    st r5, r6
+    br end_movebul
+  fi
+
+  ldi r5, bull_1y
+  st r5, r4
+
+
+end_movebul:
+  pop r6
+  pop r4
+  pop r5
+  rts
+
+# Enemy 2 bullet functions
+movebul2:
+  push r5
+  push r4
+  push r6
+
+  ldi r5, bull_2id
+  ld r5, r6
+  if
+    cmp r6, 15
+  is ne
+    br end_movebul2
+  fi
+
+  ldi r5, bull_2y
+  ld r5, r4
+  add r4, 2
+  if
+    cmp r4, 58
+  is ge
+    ldi r5,bull_2id
+    ldi r6, 9
+    st r5, r6
+    br end_movebul2
+  fi
+
+  ldi r5, bull_2y
+  st r5, r4
+
+
+end_movebul2:
+  pop r6
+  pop r4
+  pop r5
+  rts
+
 
 exception_handler>
   halt
