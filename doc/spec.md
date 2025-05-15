@@ -7,7 +7,7 @@ classoption:
 indent: true
 linestretch: 1.25
 date: \today
-title: "**Project documentation**"
+title: "**Project \"Space Invaders\" documentation**"
 subtitle: "\"Specification\""
 author:
     - "Markidonov Vladimir"
